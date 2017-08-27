@@ -45,7 +45,7 @@ if __name__ == '__main__':
     parser.add_argument('-batch_size', action="store", dest="batch_size", type=int) # argument for use how many stock data for learning
     parser.add_argument('-nth_batch', action="store", dest="nth_batch", type=int)
     parser.add_argument('-start', action="store", dest="start", default='2017-04-17') # argument for the duration of tweet infomation to use for learning
-    parser.add_argument('-end', action="store", dest="end", default='2017-05-30')
+    parser.add_argument('-end', action="store", dest="end", default='2017-05-31')
     parser.add_argument('-shift_time', action="store", dest="shift_time", type=int, default=0) # argument for shift_time
     parser.add_argument('-threshold', action="store", dest="enter_partial_fit_threshold", type=int, default=200000)
     args = parser.parse_args()
