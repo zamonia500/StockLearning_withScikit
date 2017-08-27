@@ -1,8 +1,7 @@
 import os
 import ast
-import numpy as np
-import collections
 import datetime
+import numpy as np
 """
 클래스를 만들 것이다.
 생성자로 start, end를 입력하여 언제부터 언제까지 읽어올 것인가 확인을 해야 하나?
@@ -16,12 +15,14 @@ FMT_Ymd = '%Y-%m-%d'
 FMT_TWEET_SEOUL = "%a %b %d %X +0900 %Y"
 FMT_MINUS_JOIN = '%Y-%m-%d-%X-%z'
 
-VECTOR_DIR_PATH = '/Users/Opi/dev/data/tweet_index_vector/vectors'
 USING_MORPHEME_NUMBER = 1000  # 사용하는 형태소 수
 
 class TweetLoader:
 
-    def __init__(self, start='2017-04-17', end='2017-07-01'):
+    def __init__(self, vector_path, start='2017-04-17', end='2017-07-01', ):
+        if not os.path.isdir(vector_path):
+            raise ValueError("nonexisting vector_path")
+        self.path = vector_path
         self.start = start
         self.end = end
 
@@ -36,40 +37,38 @@ class TweetLoader:
         :y : np.ndarray filled 1 or 0
         """
         if not start or not end:
-            raise ValueError("gen_Xy needs '%Y-%m-%d' format string date")
+            raise ValueError("gen_X needs '%Y-%m-%d' format string date")
         if not isinstance(shift, datetime.timedelta):
             raise TypeError('shift parameter should time delta value')
 
         X = []
 
-        start = self._convert_to_date(start)
-        end = self._convert_to_date(end)
+        start = datetime.datetime.strptime(start, FMT_Ymd)
+        end = datetime.datetime.strptime(end, FMT_Ymd)
 
         date = start
         tommorrow = datetime.timedelta(days=1)
 
         while date <= end:
             file_path = self._get_tweet_filepath(date) # date를 기준으로 tweet파일의 이름을 생성한다.
-            if not os.path.isfile(file_path): # 해당 파일이 없으면 date 변경 후 continue 한다.
+            if not os.path.isfile(file_path): # 해당 파일이 없으면 다음 날짜로 넘어간다.
                 date = date + tommorrow
                 continue
             else:
                 """파일이 있으면 첫 줄을 읽어서 time shift를 해 보고 몇일의 데이터인지의 정보를  X_date에 저장해 놓는다.
                 그 뒤 다시 파일을 닫아서 처음부터 읽을 수 있게 한다."""
-                with open(file_path, 'r') as honeymoon:
-                    data = ast.literal_eval(honeymoon.readline())
+                with open(file_path, 'r') as only_firstline:
+                    data = ast.literal_eval(only_firstline.readline())
                     shifted_date = datetime.datetime.strptime(data['created_at'], FMT_MINUS_JOIN) + shift
-                    # X_date = shifted_date.strftime(FMT_MINUS_JOIN) # X_date 는 파일의 앞부분 날짜
                     nextday = datetime.datetime(shifted_date.year, shifted_date.month, shifted_date.day) + tommorrow
                     landmark_time = (nextday - shift).strftime(FMT_MINUS_JOIN) + '+0900'
 
             # created_at정보가 X_date와 비교하여 유효할 경우 append
-            # 유효하지 않을 경우 stock data와 함께  yield해야 한다.
+            # 유효하지 않을 경우 partial_fit을 수행하기 위해 stock data와 함께 yield해야 한다.
             f = open(file_path, 'r')
             for line in f:
                 data = ast.literal_eval(line)
-                # created_at 정보가 유효한가?
-                if data['created_at'] <= landmark_time:
+                if data['created_at'] <= landmark_time: # created_at 정보가 유효한지 확인한다
                     X.append(self._vectorize(data['index']))
                 elif data['created_at'] > landmark_time: # only date expired it's occur
                     # yield 한다. shifted_date 변수의 날짜를 기준으로 stock data를 만든다
@@ -91,24 +90,20 @@ class TweetLoader:
         if not isinstance(index_list, list):
             raise TypeError('list parameter need')
 
-        vector = [0] * USING_MORPHEME_NUMBER
+        vector = np.ndarray(shape=(USING_MORPHEME_NUMBER,), dtype=int)
+        vector.fill(0)
         for index in index_list:
             vector[index] = 1
 
         return vector
 
 
-    def _convert_to_date(self, date):
-        if not isinstance(date, str):
-            raise TypeError('_convert_to_date needs string parameter')
-        return datetime.datetime.strptime(date, FMT_Ymd)
-
     def _get_tweet_filepath(self, date):
         if not isinstance(date, datetime.datetime):
             raise TypeError('_get_tweet_filepath needs datetime parameter')
         # file nama _example : vector-2017-04-19.txt
         filename = 'vector-' + date.strftime(FMT_Ymd) + '.txt'
-        return os.path.join(VECTOR_DIR_PATH, filename)
+        return os.path.join(self.path, filename)
 
 
 if __name__ == '__main__':
