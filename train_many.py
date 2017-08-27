@@ -12,7 +12,7 @@ from TweetLoader import TweetLoader
 
 
 # StockLoader, TweetLoader에 넘겨주는 모든 path parameter는 train_*.py에서 선언 후 넘겨준다.
-SAVE_DIR_PATH = './pickles/result_1.1/shift=0'
+SAVE_DIR_PATH = './pickles/result_1.1'
 STOCK_DIR_PATH = '/Users/Opi/dev/data/stockData/data_1.1'
 VECTOR_DIR_PATH = '/Users/Opi/dev/data/tweet_index_vector/vectors'
 
@@ -51,7 +51,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     del parser
 
-    print(args)
+    SAVE_DIR_PATH = os.path.join(SAVE_DIR_PATH, 'shift=' + str(args.shift_time))
+    if not os.path.isdir(SAVE_DIR_PATH):
+        os.mkdir(SAVE_DIR_PATH)
 
     stock = StockLoader(STOCK_DIR_PATH, batch_size=args.batch_size, nth_batch=args.nth_batch)
     tweet = TweetLoader(VECTOR_DIR_PATH)
