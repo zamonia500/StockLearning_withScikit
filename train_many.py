@@ -66,7 +66,7 @@ if __name__ == '__main__':
     y_source = []
 
     for partial_X, date in tweet.gen_X(args.start, args.end,
-                                       shift=datetime.timedelta(minutes=args.minute)): # X를 구한다.
+                                       shift=datetime.timedelta(minutes=args.shift_time)): # X를 구한다.
         print(date, message)
         X.extend(partial_X)
         y_source.append((date, len(partial_X)))

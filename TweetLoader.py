@@ -90,7 +90,7 @@ class TweetLoader:
         if not isinstance(index_list, list):
             raise TypeError('list parameter need')
 
-        vector = np.ndarray(shape=(USING_MORPHEME_NUMBER,), dtype=int)
+        vector = np.ndarray(shape=(USING_MORPHEME_NUMBER,), dtype=int) # this change makes learning faster 10 times... lol
         vector.fill(0)
         for index in index_list:
             vector[index] = 1
