@@ -10,7 +10,6 @@ from StockLoader import StockLoader
 from TweetLoader import TweetLoader
 
 SAVE_DIR_PATH = './pickles/result_1.2/'
-STOCK_DIR_PATH = '/Users/Opi/dev/data/stockData/data_1.2'
 message = 'processing..'
 
 START = '2017-04-17'

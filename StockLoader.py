@@ -4,23 +4,27 @@ import numpy as np
 import datetime
 import glob
 
-DIR_PATH = '/Users/Opi/dev/data/stockData/data_1.1' # kospi added, fixed invalid value
 
 class StockLoader:
     """
     set_nth_batch : self.stock_batch를 설정
     """
 
-    def __init__(self, dir_path , batch_size=50):
+    def __init__(self, dir_path , batch_size=None, nth_batch=None):
         """
         :param dir_path: stock date file이 있는 폴더의 경로
         :param batch_size: self.stock_batch의 크기
         """
         self.stock = []
+        if not batch_size:
+            batch_size=200
+            nth_batch=0
         self.batch_size = batch_size
         self.dir_path = dir_path
+
         self._get_stock_filelist(dir_path)
         self._make_stock_diclist()
+        self._set_nth_batch(nth_batch)
         #self._make_file_iter()
 
     def get_one_stock(self, stock_name):
@@ -39,11 +43,11 @@ class StockLoader:
         폴더 안의 모든 stock data를 읽어서 recursice dictionary를 만들어 리턴해준다.
         :return: 
         """
-        if not os.path.isdir(DIR_PATH):
+        if not os.path.isdir(self.dir_path):
             raise ValueError('dir_path not exist or invalid path')
 
         full_dic = {}
-        stock_files = glob.glob(os.path.join(DIR_PATH, '*.txt'))
+        stock_files = glob.glob(os.path.join(self.dir_path, '*.txt'))
 
         for stock_file in stock_files: # 모든 파일에 대해서 반복
             stock_dic = {}
@@ -55,7 +59,7 @@ class StockLoader:
 
         return full_dic
 
-    def set_nth_batch(self, n):
+    def _set_nth_batch(self, n):
         if not isinstance(n, int):
             raise TypeError("param n must integer")
         if n * self.batch_size >= len(self.stock):
@@ -202,7 +206,7 @@ class StockLoader:
 
 
 if __name__ == '__main__':
-    st_loader = StockLoader(DIR_PATH)
+    st_loader = StockLoader(STOCK_DIR_PATH)
     file , stock = st_loader.stock[1]
     print(file)
 
