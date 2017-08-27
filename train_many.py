@@ -9,8 +9,8 @@ from sklearn.externals import joblib
 from StockLoader import StockLoader
 from TweetLoader import TweetLoader
 
-SAVE_DIR_PATH = './pickles/result_1.2/'
-STOCK_DIR_PATH = '/Users/Opi/dev/data/stockData/data_1.2'
+SAVE_DIR_PATH = './pickles/result_1.1/shift=0'
+STOCK_DIR_PATH = '/Users/Opi/dev/data/stockData/data_1.1'
 message = 'processing..'
 
 def train_clfs(clfs, X, date, stock, unique_class):
@@ -33,7 +33,7 @@ def pkl_clfs(clfs, stock_batch, start, end, minute):
 if __name__ == '__main__':
     nth = int(sys.argv[1])
 
-    stock = StockLoader(STOCK_DIR_PATH, batch_size=20)
+    stock = StockLoader(STOCK_DIR_PATH, batch_size=50)
     stock.set_nth_batch(nth)
 
     tweet = TweetLoader()
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     for _ in range(len(stock.stock_batch)):
         clfs.append(linear_model.SGDClassifier(n_jobs=-1))
 
-    unique_class = np.array([-1,1])
+    unique_class = np.array([0,1])
     start = '2017-04-17'
     end = '2017-05-30'
     minute = 0

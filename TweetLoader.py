@@ -106,7 +106,7 @@ class TweetLoader:
     def _get_tweet_filepath(self, date):
         if not isinstance(date, datetime.datetime):
             raise TypeError('_get_tweet_filepath needs datetime parameter')
-        # file nama example : vector-2017-04-19.txt
+        # file nama _example : vector-2017-04-19.txt
         filename = 'vector-' + date.strftime(FMT_Ymd) + '.txt'
         return os.path.join(VECTOR_DIR_PATH, filename)
 

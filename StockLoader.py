@@ -91,7 +91,7 @@ class StockLoader:
                     vars = list(map(int, date.split('-')))
                     next_date = datetime.datetime(vars[0], vars[1], vars[2]) + datetime.timedelta(days=1)
                     date = '{0}-{1:02d}-{2:02d}'.format(next_date.year, next_date.month, next_date.day)
-            arr = np.ndarray(shape=(length,), dtype=float)
+            arr = np.ndarray(shape=(length, 1), dtype=float)
             arr.fill(value)
             y = np.append(y, arr)
 

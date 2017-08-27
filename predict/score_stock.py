@@ -17,7 +17,7 @@ def get_pickles(dir_path):
 
     pickle_list = []
 
-    # example of pkl file name : SGDClassifier_AK홀딩스.txt_2017-04-17_2017-05-30_timeshift/0.pkl
+    # _example of pkl file name : SGDClassifier_AK홀딩스.txt_2017-04-17_2017-05-30_timeshift/0.pkl
     for pickle_file in pickle_files:
         pickle_object = joblib.load(pickle_file)
         pickle_info = os.path.basename(pickle_file).split('_')
