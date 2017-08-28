@@ -47,7 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('-start', action="store", dest="start", default='2017-04-17') # argument for the duration of tweet infomation to use for learning
     parser.add_argument('-end', action="store", dest="end", default='2017-05-31')
     parser.add_argument('-shift_time', action="store", dest="shift_time", type=int, default=0) # argument for shift_time
-    parser.add_argument('-threshold', action="store", dest="enter_partial_fit_threshold", type=int, default=200000)
+    parser.add_argument('-threshold', action="store", dest="enter_partial_fit_threshold", type=int, default=10000)
     args = parser.parse_args()
     del parser
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
             X.clear()
             y_source.clear()
 
-    pkl_clfs(clfs, stock.stock_batch, args.start, args.end, args.minute)
+    pkl_clfs(clfs, stock.stock_batch, args.start, args.end, args.shift_time)
     print('end learning')
 
 
