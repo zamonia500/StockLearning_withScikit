@@ -64,23 +64,22 @@ if __name__ == '__main__':
 
     classes = np.array([0,1])
 
-    X = []
+
     y_source = []
 
     for partial_X, date in tweet.gen_X(args.start, args.end,
                                        shift=datetime.timedelta(minutes=args.shift_time)): # X를 구한다.
         print(date, message)
-        X.extend(partial_X)
         y_source.append((date, len(partial_X)))
-        if len(X) > args.enter_partial_fit_threshold: # X를 충분히 많이 모았으면 partial_fit을 호출한다.
-            print('partial_fit calling phase.. y_source len :', len(y_source))
-            for index, clf in enumerate(clfs):
-                y = stock.get_y(index, y_source)
-                start_time = time.time()
-                clf.partial_fit(X, y, classes)
-                print(stock.stock_batch[index][0], message, time.time() - start_time)
-            X.clear()
-            y_source.clear()
+
+        print('partial_fit calling phase.. y_source len :', len(y_source))
+        for index, clf in enumerate(clfs):
+            y = stock.get_y(index, y_source)
+            start_time = time.time()
+            clf.partial_fit(partial_X, y, classes)
+            print(stock.stock_batch[index][0], message, time.time() - start_time)
+        partial_X.clear()
+        y_source.clear()
 
     pkl_clfs(clfs, stock.stock_batch, args.start, args.end, args.shift_time)
     print('end learning')

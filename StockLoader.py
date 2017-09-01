@@ -85,7 +85,7 @@ class StockLoader:
         if not isinstance(y_source, list):
             raise TypeError('y_source : [(date1, len(X1)), (date2, len(X2), (date3, len(X2)], ....')
 
-        y = np.ndarray(shape=(0,), dtype=float)
+
         for date, length in y_source:
             for _ in range(15):  # 만약 원하는 날짜가 주말또는 공휴일이라 값이 존재하지 않으면 다음날을 찾아본다.
                 if date in self.stock_batch[index][1]:
@@ -95,11 +95,11 @@ class StockLoader:
                     vars = list(map(int, date.split('-')))
                     next_date = datetime.datetime(vars[0], vars[1], vars[2]) + datetime.timedelta(days=1)
                     date = '{0}-{1:02d}-{2:02d}'.format(next_date.year, next_date.month, next_date.day)
-            arr = np.ndarray(shape=(length, 1), dtype=float)
+            arr = np.ndarray(shape=(length,1), dtype=int)
             arr.fill(value)
-            y = np.append(y, arr)
 
-        return y
+
+        return arr
 
     def get_stock_arr(self, date, length):
         """
